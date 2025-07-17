@@ -1,194 +1,238 @@
-# Validator Service 📖
+# 🏛️ Dukcapil KTP Verification Service
 
-Layanan ini menyediakan endpoint untuk melakukan validasi data kependudukan, seperti Nomor Induk Kependudukan (NIK) dan nama lengkap, serta untuk mengambil detail data penduduk.
+Layanan microservice untuk verifikasi data KTP Dukcapil yang digunakan oleh Customer Registration Service.
 
-## Base URL
+## 📋 Daftar Isi
 
-`http://localhost:8082/api/validator`
+- [Overview](#overview)
+- [Fitur](#fitur)
+- [Tech Stack](#tech-stack)
+- [Setup](#setup)
+- [API Endpoints](#api-endpoints)
+- [Testing](#testing)
+- [Docker](#docker)
+- [Monitoring](#monitoring)
 
----
+## 🎯 Overview
 
-### Endpoints
+Dukcapil Service adalah microservice yang mengelola verifikasi data KTP (Kartu Tanda Penduduk) dari database Dukcapil. Service ini menyediakan API untuk:
 
-#### 1\. Validasi Keberadaan NIK
+- ✅ Verifikasi NIK dan nama lengkap
+- 🔍 Pengecekan keberadaan NIK
+- 📊 Statistik data KTP
+- 🔎 Pencarian data berdasarkan nama
 
-Memeriksa apakah NIK yang diberikan terdaftar dalam sistem.
+## ✨ Fitur
 
-- **URL**: `/validate/nik-exists`
-- **Method**: `POST`
-- **Header**:
-  - `Content-Type`: `application/json`
-- **Request Body**:
+### Core Features
 
-    ```json
-    {
-        "nik": "string"
-    }
-    ```
+- **NIK Verification**: Verifikasi NIK dengan nama lengkap
+- **Case-Insensitive Search**: Pencarian tidak sensitif terhadap huruf besar/kecil
+- **Data Validation**: Validasi format NIK 16 digit
+- **Performance Optimized**: Database indexing untuk query cepat
+- **Error Handling**: Comprehensive error responses
 
-  - `nik` (string, **required**): Nomor Induk Kependudukan yang akan divalidasi.
+### Security Features
 
-- **Response**:
-  - **Status Code**: `200 OK`
-  - **Body**:
+- **CORS Protection**: Configured CORS untuk Customer Service
+- **Input Validation**: Strict validation dengan Bean Validation
+- **SQL Injection Protection**: Parameterized queries
+- **Security Headers**: Security headers pada response
 
-    ```json
-    {
-        "nikExists": true
-    }
-    ```
+### Monitoring Features
 
-  - `nikExists` (boolean): `true` jika NIK ditemukan, `false` jika tidak.
+- **Health Check**: Endpoint untuk monitoring
+- **Statistics**: Real-time statistics data KTP
+- **Performance Metrics**: Response time tracking
+- **Audit Logging**: Request/response logging
 
-    - **Contoh Response `200 OK` (NIK Ditemukan)**:
+## 🛠️ Tech Stack
 
-        ```json
-        {
-            "nikExists": true
-        }
-        ```
+- **Java 21** - Programming language
+- **Spring Boot 3.2** - Framework
+- **Spring Data JPA** - Data access
+- **PostgreSQL 15** - Database
+- **Maven** - Build tool
+- **Docker** - Containerization
 
-    - **Contoh Response `200 OK` (NIK Tidak Ditemukan)**:
+## 🚀 Setup
 
-        ```json
-        {
-            "nikExists": false
-        }
-        ```
+### Prerequisites
 
-- contoh testing API dengan cURL
+- Java 21
+- Maven 3.9+
+- PostgreSQL 15+
+- Git
 
-    ```bash
-    curl -X POST \
-    http://localhost:8082/api/validator/validate/nik-exists \
-    -H 'Content-Type: application/json' \
-    -d '{
-        "nik": "1234567890123456"
-    }'
-    ```
+### 1. Clone Repository
 
----
+```bash
+git clone <repository-url>
+cd dukcapil-service
+```
 
-#### 2\. Validasi NIK dan Nama Lengkap
+### 2. Database Setup
 
-Memeriksa apakah kombinasi NIK dan nama lengkap sesuai dengan data yang terdaftar dalam sistem.
+```bash
+# Create database
+psql -U postgres -c "CREATE DATABASE dukcapil_ktp;"
 
-- **URL**: `/validate/nik-nama`
-- **Method**: `POST`
-- **Header**:
-  - `Content-Type`: `application/json`
-- **Request Body**:
+# Run setup script
+psql -U postgres -d dukcapil_ktp -f create_dukcapil_database.sql
+```
 
-```json
+### 3. Configuration
+
+```bash
+# Copy example config
+cp src/main/resources/application.properties.example src/main/resources/application.properties
+
+# Edit database configuration
+vim src/main/resources/application.properties
+```
+
+### 4. Build & Run
+
+```bash
+# Build project
+mvn clean compile
+
+# Run application
+mvn spring-boot:run
+
+# Or run with specific profile
+mvn spring-boot:run -Dspring-boot.run.profiles=development
+```
+
+### 5. Verify Installation
+
+```bash
+# Health check
+curl http://localhost:8081/api/dukcapil/health
+
+# Test verification
+curl -X POST http://localhost:8081/api/dukcapil/verify-nik \
+  -H "Content-Type: application/json" \
+  -d '{"nik": "3175031234567890", "namaLengkap": "John Doe"}'
+```
+
+## 📡 API Endpoints
+
+### Health & Info
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/dukcapil/health` | Service health check |
+| GET | `/api/dukcapil/ping` | Simple ping test |
+| GET | `/api/dukcapil/docs` | API documentation |
+| GET | `/api/dukcapil/stats` | Service statistics |
+
+### Core Verification
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/dukcapil/verify-nik` | Verify NIK + name |
+| POST | `/api/dukcapil/check-nik` | Check NIK existence |
+| GET | `/api/dukcapil/ktp-data/{nik}` | Get KTP data by NIK |
+
+### Search & Analytics
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/dukcapil/search-name?name={name}` | Search by name |
+| GET | `/api/dukcapil/stats/comprehensive` | Detailed statistics |
+
+### Request/Response Examples
+
+#### Verify NIK
+
+```bash
+# Request
+POST /api/dukcapil/verify-nik
 {
-    "nik": "string",
-    "namaLengkap": "string"
+  "nik": "3175031234567890",
+  "namaLengkap": "John Doe"
+}
+
+# Response - Success
+{
+  "valid": true,
+  "message": "Data NIK dan nama valid sesuai database Dukcapil",
+  "data": {
+    "nik": "3175031234567890",
+    "namaLengkap": "John Doe",
+    "tempatLahir": "Jakarta",
+    "tanggalLahir": "1990-05-15",
+    "jenisKelamin": "Laki-laki",
+    "agama": "Islam",
+    "alamat": "Jl. Sudirman No. 123, RT 001/RW 002",
+    "kecamatan": "Tanah Abang",
+    "kelurahan": "Bendungan Hilir"
+  },
+  "timestamp": "2024-01-15T10:30:00Z",
+  "service": "Dukcapil Service"
 }
 ```
 
-- `nik` (string, **required**): Nomor Induk Kependudukan.
-- `namaLengkap` (string, **required**): Nama lengkap yang akan divalidasi bersama NIK.
+#### Check NIK
 
-- **Response**:
-  - **Status Code**: `200 OK`
-  - **Body**:
+```bash
+# Request
+POST /api/dukcapil/check-nik
+{
+  "nik": "3175031234567890"
+}
 
-    ```json
-    {
-        "nikNamaMatches": true
-    }
-    ```
+# Response
+{
+  "exists": true,
+  "nik": "3175031234567890",
+  "message": "NIK terdaftar di database Dukcapil",
+  "service": "Dukcapil Service",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
 
-    - `nikNamaMatches` (boolean): `true` jika kombinasi NIK dan nama lengkap cocok, `false` jika tidak.
-    - **Contoh Response `200 OK` (Cocok)**:
+## 🧪 Testing
 
-      ```json
-      {
-          "nikNamaMatches": true
-      }
-      ```
+### Automated Testing
 
-    - **Contoh Response `200 OK` (Tidak Cocok)**:
+```bash
+# Run unit tests
+mvn test
 
-      ```json
-      {
-          "nikNamaMatches": false
-      }
-      ```
+# Run integration tests
+mvn verify
 
-- contoh testing API dengan cURL
+# Run with coverage
+mvn clean test jacoco:report
+```
 
-    ```bash
-    curl -X POST \
-    http://localhost:8082/api/validator/validate/nik-nama \
-    -H 'Content-Type: application/json' \
-    -d '{
-        "nik": "1234567890123456",
-        "namaLengkap": "Budi Santoso"
-    }'
-    ```
+### Manual Testing
 
----
+```bash
+# Run comprehensive test script
+chmod +x test_dukcapil_service.sh
+./test_dukcapil_service.sh
 
-#### 3\. Mendapatkan Detail Penduduk Berdasarkan NIK
+# Test specific endpoint
+curl -X POST http://localhost:8081/api/dukcapil/verify-nik \
+  -H "Content-Type: application/json" \
+  -d '{"nik": "3175031234567890", "namaLengkap": "John Doe"}'
+```
 
-Mengambil seluruh detail data penduduk berdasarkan NIK.
+### Test Data
 
-- **URL**: `/get-details/{nik}`
-- **Method**: `GET`
-- **Path Parameters**:
-  - `nik` (string, **required**): Nomor Induk Kependudukan dari penduduk yang detailnya ingin diambil.
-- **Response**:
-  - **Status Code**: `200 OK`
-  - **Body**: (Objek `Penduduk`)
+Valid NIKs for testing:
 
-    ```json
-    {
-        "nik": "string",
-        "namaLengkap": "string",
-        "tempatLahir": "string",
-        "tanggalLahir": "YYYY-MM-DD",
-        "jenisKelamin": "string",
-        "alamat": "string",
-        "rtRw": "string",
-        "kelDesa": "string",
-        "kecamatan": "string",
-        "agama": "string",
-        "statusPerkawinan": "string",
-        "pekerjaan": "string",
-        "kewarganegaraan": "string",
-        "berlakuHingga": "YYYY-MM-DD"
-    }
-    ```
+- `3175031234567890` - John Doe
+- `3175032345678901` - Jane Smith
+- `3175033456789012` - Ahmad Rahman
+- `1234567890123456` - Test User One
+- `1234567890123457` - Test User Two
 
-  - **Contoh Response `200 OK`**:
+## 🐳 Docker
 
-    ```json
-    {
-        "nik": "1234567890123456",
-        "namaLengkap": "Budi Santoso",
-        "tempatLahir": "Jakarta",
-        "tanggalLahir": "1990-05-15",
-        "jenisKelamin": "Laki-laki",
-        "alamat": "Jl. Merdeka No. 10",
-        "rtRw": "001/001",
-        "kelDesa": "Kebon Kacang",
-        "kecamatan": "Tanah Abang",
-        "agama": "Islam",
-        "statusPerkawinan": "Menikah",
-        "pekerjaan": "Swasta",
-        "kewarganegaraan": "WNI",
-        "berlakuHingga": "2030-12-31"
-    }
-    ```
+### Quick Start
 
-  - **Status Code**: `404 Not Found`
-  - **Description**: Jika NIK yang diminta tidak ditemukan dalam sistem.
-  - **Contoh Response `404 Not Found`**: (Biasanya tidak ada body)
-
-- contoh testing API dengan cURL
-
-    ```bash
-    curl -X GET \
-        http://localhost:8082/api/validator/get-details/1234567890123456
-    ```
+```bash
