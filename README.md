@@ -2,6 +2,19 @@
 
 Layanan microservice untuk verifikasi data KTP Dukcapil yang digunakan oleh Customer Registration Service.
 
+## Mulai Cepat
+
+```bash
+# pastikan anda sudah memiliki postgresql dan juga java dengan versi 21 terinstall.
+
+# jika belum punya:
+  # sudo apt install postgresql
+  # sudo apt install openjdk-21-jdk
+
+# jalankan script :
+./setup.sh
+```
+
 ## 📋 Daftar Isi
 
 - [Overview](#overview)
@@ -232,7 +245,3 @@ Valid NIKs for testing:
 - `1234567890123457` - Test User Two
 
 ## 🐳 Docker
-
-### Quick Start
-
-```bash

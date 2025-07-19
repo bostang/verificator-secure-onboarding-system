@@ -4,12 +4,11 @@
 # Pastikan PostgreSQL client (psql) sudah terinstall dan berjalan.
 # Ganti 'your_db_user' jika username database kamu bukan 'postgres'
 # Ganti 'your_db_password' jika password database kamu bukan 'password'
-# Penting: Pastikan database 'customer_registration' sudah ada atau buat secara manual
 # sebelum menjalankan skrip ini, atau tambahkan langkah pembuatan database di sini.
 
 echo "Menjalankan skrip SQL: database_setup_FIXED.sql"
 # Menggunakan PGPASSWORD untuk menghindari prompt password
-PGPASSWORD=password psql -h localhost -U postgres -d customer_registration -f ./sql/database_fix.sql
+PGPASSWORD=password psql -h localhost -U postgres -f ./sql/database_fix.sql
 
 if [ $? -eq 0 ]; then
     echo "database_fix.sql berhasil dijalankan."

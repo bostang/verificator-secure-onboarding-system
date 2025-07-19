@@ -2,11 +2,16 @@
 -- File: database_fix.sql
 -- Run: psql -U postgres -d dukcapil_ktp -f sql/database_fix.sql
 
+DROP DATABASE IF EXISTS dukcapil_ktp;
+CREATE DATABASE dukcapil_ktp WITH OWNER postgres;
+
 -- 1. Drop problematic view first
 DROP VIEW IF EXISTS ktp_summary CASCADE;
 
 -- 2. Drop existing table to recreate fresh
 DROP TABLE IF EXISTS ktp_dukcapil CASCADE;
+
+\connect dukcapil_ktp;
 
 -- 3. Create table with correct column types
 CREATE TABLE ktp_dukcapil (
