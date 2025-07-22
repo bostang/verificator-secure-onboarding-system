@@ -1,57 +1,50 @@
-# ===== Dockerfile =====
-# File: Dockerfile
+# Stage 1: Build aplikasi menggunakan Maven
+# Gunakan image Maven + Java 21
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 
-# Use Eclipse Temurin JDK 21
-FROM eclipse-temurin:21-jdk-alpine AS builder
-
-# Set working directory
+# Set working directory di dalam container build stage
 WORKDIR /app
 
-# Copy Maven files
-COPY pom.xml .
-COPY .mvn .mvn
-COPY mvnw .
+# Copy pom.xml dan mvnw (Maven Wrapper) terlebih dahulu untuk memanfaatkan Docker layer caching.
+# Karena Dockerfile ini berada di dalam folder verificator-secure-onboarding-system,
+# jalur COPY sekarang relatif terhadap folder tersebut.
+COPY pom.xml ./
+COPY mvnw ./
+COPY .mvn ./.mvn
 
-# Make mvnw executable
+# Beri izin eksekusi pada mvnw
 RUN chmod +x mvnw
 
-# Download dependencies
-RUN ./mvnw dependency:go-offline -B
-
-# Copy source code
+# Copy seluruh source code verifikator
+# Ini akan menyalin semua file dari folder src ke /app/src di dalam container.
 COPY src ./src
 
-# Build application
+# Build aplikasi Spring Boot
+# Perintah ini akan mengkompilasi kode dan membuat file JAR yang dapat dieksekusi.
+# -DskipTests digunakan untuk melewati pengujian selama proses build Docker.
 RUN ./mvnw clean package -DskipTests
 
-# ===== Runtime Stage =====
-FROM eclipse-temurin:21-jre-alpine
+# Stage 2: Jalankan jar dengan OpenJDK
+# Gunakan image OpenJDK yang ringan untuk menjalankan aplikasi.
+FROM eclipse-temurin:21-jdk-alpine 
+    # Menggunakan alpine untuk ukuran image yang lebih kecil
 
-# Install packages for better monitoring
-RUN apk add --no-cache curl jq
-
-# Create app user
-RUN addgroup -g 1001 -S appgroup && \
-    adduser -u 1001 -S appuser -G appgroup
-
-# Set working directory
+# Set working directory di dalam container runtime stage
 WORKDIR /app
 
-# Copy jar file
-COPY --from=builder /app/target/dukcapil-service-*.jar app.jar
+# Copy hasil build (file JAR) dari stage 'build' ke direktori /app di stage ini.
+# File JAR yang dihasilkan akan memiliki nama seperti 'verificator-secure-onboarding-system-0.0.1-SNAPSHOT.jar'
+# atau nama lain sesuai konfigurasi di pom.xml Anda.
+# Kita menyalinnya sebagai 'app.jar' untuk konsistensi.
+COPY --from=build /app/target/*.jar app.jar
 
-# Create logs directory
-RUN mkdir -p /app/logs && chown -R appuser:appgroup /app
+# --- Opsional: Tambahkan baris ini untuk debugging (misalnya, untuk netcat) ---
+# eclipse-temurin:21-jdk-alpine adalah berbasis Alpine, jadi gunakan apk
+# RUN apk update && apk add netcat-traditional && rm -rf /var/cache/apk/*
+# Baris di atas akan menginstal netcat untuk debugging jika diperlukan.
+# 'rm -rf /var/cache/apk/*' membersihkan cache apk untuk menjaga ukuran image tetap kecil.
+# ----------------------------------------------------------------------
 
-# Switch to app user
-USER appuser
-
-# Expose port
-EXPOSE 8081
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:8081/api/dukcapil/health || exit 1
-
-# Run application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Tentukan perintah yang akan dijalankan saat container dimulai.
+# Ini akan menjalankan aplikasi Spring Boot Anda.
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]

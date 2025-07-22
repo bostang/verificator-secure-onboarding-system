@@ -6,8 +6,7 @@ server.port=8081
 server.servlet.context-path=/api
 
 # Database Configuration - Dukcapil Database
-# --- PERUBAHAN DI SINI: Menggunakan nama layanan Docker untuk komunikasi internal ---
-spring.datasource.url=jdbc:postgresql://db_verifikator:5432/dukcapil_ktp
+spring.datasource.url=jdbc:postgresql://localhost:5432/dukcapil_ktp
 spring.datasource.username=postgres
 spring.datasource.password=password
 spring.datasource.driver-class-name=org.postgresql.Driver
@@ -37,7 +36,6 @@ spring.jpa.properties.hibernate.order_updates=true
 spring.jpa.properties.hibernate.jdbc.batch_versioned_data=true
 
 # CORS Configuration
-# Ini untuk akses dari browser di host Anda, jadi localhost tetap benar
 app.cors.allowed-origins=http://localhost:8080,http://localhost:3000,http://localhost:5173
 
 # Security Settings (untuk production)
@@ -66,12 +64,8 @@ info.app.java.version=24
 logging.level.com.dukcapil.service=INFO
 logging.level.org.springframework.web=INFO
 logging.level.org.springframework.security=INFO
-
-# logging.level.org.hibernate.SQL=INFO
-# logging.level.org.hibernate.type.descriptor.sql.BasicBinder=INFO
-
-logging.level.org.hibernate.SQL=DEBUG
-logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+logging.level.org.hibernate.SQL=INFO
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=INFO
 
 # Log Pattern
 logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [DUKCAPIL] %logger{36} - %msg%n
