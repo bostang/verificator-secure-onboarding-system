@@ -1,5 +1,6 @@
 package com.dukcapil.service.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,11 +12,24 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
-// import java.util.List;
+import java.util.List;
+import javax.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+
+    @Value("${app.cors.allowed-origins:http://localhost:8080}") // Default jika properti tidak ditemukan
+    private List<String> allowedOrigins;
+
+    @PostConstruct
+    public void init() {
+        logger.info("Verifikator CORS Allowed Origins configured: {}", allowedOrigins);
+    }
     
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -24,23 +38,16 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // Public endpoints untuk health check dan docs
                 .requestMatchers("/api/dukcapil/health").permitAll()
                 .requestMatchers("/api/dukcapil/ping").permitAll()
                 .requestMatchers("/api/dukcapil/docs").permitAll()
                 .requestMatchers("/error").permitAll()
-                
-                // Allow OPTIONS untuk CORS preflight
                 .requestMatchers("OPTIONS", "/**").permitAll()
-                
-                // Semua endpoint dukcapil lainnya untuk development (di production pakai API Key)
                 .requestMatchers("/api/dukcapil/**").permitAll()
-                
-                // Protected by default
                 .anyRequest().authenticated()
             )
             .headers(headers -> headers
-                .httpStrictTransportSecurity(hstsConfig -> hstsConfig
+                .httpStrictTransportTransportSecurity(hstsConfig -> hstsConfig
                     .maxAgeInSeconds(31536000)
                     .includeSubDomains(true)
                 )
@@ -63,21 +70,12 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        // Allow Customer Service dan Frontend
-        configuration.setAllowedOriginPatterns(Arrays.asList(
-            "http://localhost:8080",  // Customer Service
-            "http://localhost:3000",  // Frontend React
-            "http://localhost:5173",  // Frontend Vite
-            "https://*.trycloudflare.com", // Cloudflare tunnels
-            "http://127.0.0.1:*"      // Local testing
-        ));
+        configuration.setAllowedOriginPatterns(allowedOrigins);
         
-        // Allow semua HTTP methods yang dibutuhkan
         configuration.setAllowedMethods(Arrays.asList(
             "GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"
         ));
         
-        // Allow headers yang dibutuhkan
         configuration.setAllowedHeaders(Arrays.asList(
             "Authorization", 
             "Content-Type", 
@@ -89,7 +87,6 @@ public class SecurityConfig {
             "Access-Control-Request-Headers"
         ));
         
-        // Expose headers untuk response
         configuration.setExposedHeaders(Arrays.asList(
             "Access-Control-Allow-Origin",
             "Access-Control-Allow-Credentials",
