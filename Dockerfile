@@ -38,10 +38,10 @@ WORKDIR /app
 # Kita menyalinnya sebagai 'app.jar' untuk konsistensi.
 COPY --from=build /app/target/*.jar app.jar
 
-# --- Opsional: Tambahkan baris ini untuk debugging (misalnya, untuk netcat) ---
+# --- Tambahkan baris ini untuk menginstal bash, netcat, dan curl ---
 # eclipse-temurin:21-jdk-alpine adalah berbasis Alpine, jadi gunakan apk
-# RUN apk update && apk add netcat-traditional && rm -rf /var/cache/apk/*
-# Baris di atas akan menginstal netcat untuk debugging jika diperlukan.
+RUN apk update && apk add bash netcat-openbsd curl && rm -rf /var/cache/apk/* # PERUBAHAN DI SINI: Kembali ke netcat-openbsd
+# Baris di atas akan menginstal bash, netcat, dan curl untuk debugging jika diperlukan.
 # 'rm -rf /var/cache/apk/*' membersihkan cache apk untuk menjaga ukuran image tetap kecil.
 # ----------------------------------------------------------------------
 

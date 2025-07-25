@@ -13,7 +13,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.List;
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +23,7 @@ public class SecurityConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
-    @Value("${app.cors.allowed-origins:http://localhost:8080}") // Default jika properti tidak ditemukan
+    @Value("${app.cors.allowed-origins:http://localhost:8080}")
     private List<String> allowedOrigins;
 
     @PostConstruct
@@ -38,16 +38,30 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // Public endpoints untuk health check dan docs
                 .requestMatchers("/api/dukcapil/health").permitAll()
                 .requestMatchers("/api/dukcapil/ping").permitAll()
                 .requestMatchers("/api/dukcapil/docs").permitAll()
                 .requestMatchers("/error").permitAll()
+                
+                // Allow OPTIONS untuk CORS preflight
                 .requestMatchers("OPTIONS", "/**").permitAll()
-                .requestMatchers("/api/dukcapil/**").permitAll()
+                
+                // Semua endpoint dukcapil yang spesifik diizinkan
+                // Ini akan mencakup /api/dukcapil/verify-nik jika tidak ada API Key
+                .requestMatchers("/api/dukcapil/verify-nik").permitAll() // Tambahkan ini secara eksplisit
+                .requestMatchers("/api/dukcapil/check-nik").permitAll() // Jika ada
+                // ... tambahkan endpoint dukcapil lain yang perlu di-permitAll()
+                
+                // Jika Anda ingin semua endpoint di bawah /api/dukcapil di-permitAll()
+                // Anda bisa gunakan ini, tapi pastikan tidak ada API Key filter yang aktif
+                // .requestMatchers("/api/dukcapil/**").permitAll()
+                
+                // Protected by default - semua permintaan lain memerlukan otentikasi
                 .anyRequest().authenticated()
             )
             .headers(headers -> headers
-                .httpStrictTransportTransportSecurity(hstsConfig -> hstsConfig
+                .httpStrictTransportSecurity(hstsConfig -> hstsConfig
                     .maxAgeInSeconds(31536000)
                     .includeSubDomains(true)
                 )
