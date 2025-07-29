@@ -6,15 +6,13 @@ Layanan microservice untuk verifikasi data KTP Dukcapil yang digunakan oleh Cust
 
 ```bash
 # build docker image
-docker build -t verificator-secure-onboarding-system .
+docker build -t asia.gcr.io/primeval-rune-467212-t9/verificator-secure-onboarding-system .
 
 # login ke gcloud
 gcloud auth login
 
 # autentikasi docker
 gcloud auth configure-docker
-
-docker tag verificator-secure-onboarding-system asia.gcr.io/primeval-rune-467212-t9/verificator-secure-onboarding-system:latest
 
 docker push asia.gcr.io/primeval-rune-467212-t9/verificator-secure-onboarding-system:latest
 
@@ -24,6 +22,21 @@ gcloud config get-value project
 
 # aktifkan API artifact registry
 gcloud services enable artifactregistry.googleapis.com
+
+# CATATAN : APABILA PUSH GAGAL, LAKUKAN MELALUI CLOUD SHELL TERMINAL DI GOOGLE CLOUD
+```
+
+## `.env`
+
+```conf
+# Password untuk koneksi ke database PostgreSQL
+SPRING_DATASOURCE_PASSWORD="..."
+
+# Konfigurasi untuk koneksi ke Cloud SQL
+PROJECT_ID="..."
+REGION="..."
+INSTANCE_NAME="..."
+DATABASE_NAME="..."
 ```
 
 ## Mulai Cepat

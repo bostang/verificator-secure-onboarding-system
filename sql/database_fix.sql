@@ -5,13 +5,13 @@
 DROP DATABASE IF EXISTS dukcapil_ktp;
 CREATE DATABASE dukcapil_ktp WITH OWNER postgres;
 
+\connect dukcapil_ktp;
+
 -- 1. Drop problematic view first
 DROP VIEW IF EXISTS ktp_summary CASCADE;
 
 -- 2. Drop existing table to recreate fresh
 DROP TABLE IF EXISTS ktp_dukcapil CASCADE;
-
-\connect dukcapil_ktp;
 
 -- 3. Create table with correct column types
 CREATE TABLE ktp_dukcapil (
@@ -76,6 +76,83 @@ INSERT INTO ktp_dukcapil (
 
 ('1234567890123457', 'Test User Two', 'Bandung', '1992-02-02', 'PEREMPUAN',
  'Jl. Test No. 456', 'Test Kecamatan', 'Test Kelurahan', 'KRISTEN', 'KAWIN');
+
+-- insert additional sample data
+-- Tambahan 23 data sampel untuk mencapai total 30 data
+
+INSERT INTO ktp_dukcapil (
+    nik, nama_lengkap, tempat_lahir, tanggal_lahir, jenis_kelamin,
+    nama_alamat, kecamatan, kelurahan, agama, status_perkawinan
+) VALUES
+('3175036789012345', 'Dewi Lestari', 'Surabaya', '1993-01-01', 'PEREMPUAN',
+ 'Jl. Kebon Jeruk No. 1, RT 011/RW 012', 'Kebon Jeruk', 'Kedoya Selatan', 'ISLAM', 'BELUM KAWIN'),
+
+('3175037890123456', 'Fajar Ramadhan', 'Medan', '1989-07-07', 'LAKI_LAKI',
+ 'Jl. Raya Bogor No. 234, RT 013/RW 014', 'Ciracas', 'Rambutan', 'ISLAM', 'KAWIN'),
+
+('3175038901234567', 'Citra Kirana', 'Bandung', '1991-04-12', 'PEREMPUAN',
+ 'Jl. Bintaro Raya No. 567, RT 015/RW 016', 'Pesanggrahan', 'Bintaro', 'KRISTEN', 'KAWIN'),
+
+('3175039012345678', 'Gatot Subroto', 'Palembang', '1978-09-20', 'LAKI_LAKI',
+ 'Jl. Fatmawati No. 890, RT 017/RW 018', 'Cilandak', 'Gandaria Selatan', 'ISLAM', 'KAWIN'),
+
+('3175030123456789', 'Hana Putri', 'Makassar', '1998-02-28', 'PEREMPUAN',
+ 'Jl. Pondok Indah No. 111, RT 019/RW 020', 'Kebayoran Lama', 'Pondok Pinang', 'ISLAM', 'BELUM KAWIN'),
+
+('3175031122334455', 'Irfan Hakim', 'Semarang', '1980-06-03', 'LAKI_LAKI',
+ 'Jl. Pahlawan Revolusi No. 222, RT 021/RW 022', 'Duren Sawit', 'Pondok Bambu', 'ISLAM', 'KAWIN'),
+
+('3175032233445566', 'Kartika Sari', 'Yogyakarta', '1996-10-10', 'PEREMPUAN',
+ 'Jl. Jatinegara Timur No. 333, RT 023/RW 024', 'Jatinegara', 'Cipinang Cempedak', 'HINDU', 'BELUM KAWIN'),
+
+('3175033344556677', 'Lukman Sardi', 'Jakarta', '1975-03-01', 'LAKI_LAKI',
+ 'Jl. Dewi Sartika No. 444, RT 025/RW 026', 'Kramat Jati', 'Cililitan', 'ISLAM', 'KAWIN'),
+
+('3175034455667788', 'Maria Ulfa', 'Solo', '1994-07-19', 'PEREMPUAN',
+ 'Jl. Raya Condet No. 555, RT 027/RW 028', 'Kramat Jati', 'Batu Ampar', 'KRISTEN', 'BELUM KAWIN'),
+
+('3175035566778899', 'Noval Syahputra', 'Bandung', '1987-01-30', 'LAKI_LAKI',
+ 'Jl. Kalimalang No. 666, RT 029/RW 030', 'Duren Sawit', 'Cipinang Melayu', 'ISLAM', 'KAWIN'),
+
+('3175036677889900', 'Putri Ayu', 'Denpasar', '1999-04-05', 'PEREMPUAN',
+ 'Jl. Raya Kalibata No. 777, RT 031/RW 032', 'Pancoran', 'Kalibata', 'HINDU', 'BELUM KAWIN'),
+
+('3175037788990011', 'Rizky Pratama', 'Jakarta', '1982-08-14', 'LAKI_LAKI',
+ 'Jl. Raya Pasar Minggu No. 888, RT 033/RW 034', 'Pasar Minggu', 'Jati Padang', 'ISLAM', 'KAWIN'),
+
+('3175038899001122', 'Sarah Wijayanto', 'Bogor', '1990-11-29', 'PEREMPUAN',
+ 'Jl. Lebak Bulus Raya No. 999, RT 035/RW 036', 'Cilandak', 'Lebak Bulus', 'BUDDHA', 'KAWIN'),
+
+('3175039900112233', 'Taufik Hidayat', 'Surabaya', '1981-02-17', 'LAKI_LAKI',
+ 'Jl. Pondok Labu No. 101, RT 037/RW 038', 'Cilandak', 'Pondok Labu', 'ISLAM', 'KAWIN'),
+
+('3175030011223344', 'Umi Kulsum', 'Malang', '1997-06-08', 'PEREMPUAN',
+ 'Jl. Cirendeu Raya No. 202, RT 039/RW 040', 'Ciputat Timur', 'Cirendeu', 'ISLAM', 'BELUM KAWIN'),
+
+('3175031020304050', 'Vicky Prasetyo', 'Jakarta', '1983-09-23', 'LAKI_LAKI',
+ 'Jl. Raya Ciputat No. 303, RT 041/RW 042', 'Ciputat', 'Pisangan', 'ISLAM', 'KAWIN'),
+
+('3175032030405060', 'Wulan Guritno', 'Bandung', '1992-12-04', 'PEREMPUAN',
+ 'Jl. Veteran No. 404, RT 043/RW 044', 'Tanah Abang', 'Kebon Kacang', 'KRISTEN', 'KAWIN'),
+
+('3175033040506070', 'Xavier Putra', 'Padang', '1986-03-11', 'LAKI_LAKI',
+ 'Jl. Kebon Sirih No. 505, RT 045/RW 046', 'Menteng', 'Kebon Sirih', 'ISLAM', 'BELUM KAWIN'),
+
+('3175034050607080', 'Yuni Shara', 'Jakarta', '1991-05-27', 'PEREMPUAN',
+ 'Jl. Teuku Umar No. 606, RT 047/RW 048', 'Menteng', 'Gondangdia', 'ISLAM', 'KAWIN'),
+
+('3175035060708090', 'Zaki Anwar', 'Bogor', '1984-07-09', 'LAKI_LAKI',
+ 'Jl. Diponegoro No. 707, RT 049/RW 050', 'Menteng', 'Menteng', 'ISLAM', 'KAWIN'),
+
+('3175036070809010', 'Aisha Rahma', 'Surabaya', '1996-09-16', 'PEREMPUAN',
+ 'Jl. Imam Bonjol No. 808, RT 051/RW 052', 'Menteng', 'Cikini', 'ISLAM', 'BELUM KAWIN'),
+
+('3175037080901020', 'Bayu Dirgantara', 'Medan', '1985-11-21', 'LAKI_LAKI',
+ 'Jl. Gondangdia Lama No. 909, RT 053/RW 054', 'Menteng', 'Cikini', 'BUDDHA', 'KAWIN'),
+
+('3175038090102030', 'Cinta Laura', 'Jakarta', '1993-02-01', 'PEREMPUAN',
+ 'Jl. Kramat Raya No. 101, RT 055/RW 056', 'Senen', 'Kramat', 'KRISTEN', 'BELUM KAWIN');
+
 
 -- 7. Verify data
 SELECT 'Database fixed successfully!' as status;
