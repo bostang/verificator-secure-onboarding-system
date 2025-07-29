@@ -2,6 +2,30 @@
 
 Layanan microservice untuk verifikasi data KTP Dukcapil yang digunakan oleh Customer Registration Service.
 
+## Cara push ke GCR
+
+```bash
+# build docker image
+docker build -t verificator-secure-onboarding-system .
+
+# login ke gcloud
+gcloud auth login
+
+# autentikasi docker
+gcloud auth configure-docker
+
+docker tag verificator-secure-onboarding-system asia.gcr.io/primeval-rune-467212-t9/verificator-secure-onboarding-system:latest
+
+docker push asia.gcr.io/primeval-rune-467212-t9/verificator-secure-onboarding-system:latest
+
+gcloud auth list
+
+gcloud config get-value project
+
+# aktifkan API artifact registry
+gcloud services enable artifactregistry.googleapis.com
+```
+
 ## Mulai Cepat
 
 ```bash
