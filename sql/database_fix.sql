@@ -2,10 +2,10 @@
 -- File: database_fix.sql
 -- Run: psql -U postgres -d dukcapil_ktp -f sql/database_fix.sql
 
-DROP DATABASE IF EXISTS dukcapil_ktp;
-CREATE DATABASE dukcapil_ktp WITH OWNER postgres;
+-- DROP DATABASE IF EXISTS dukcapil_ktp;
+-- CREATE DATABASE dukcapil_ktp WITH OWNER postgres;
 
-\connect dukcapil_ktp;
+-- \connect dukcapil_ktp;
 
 -- 1. Drop problematic view first
 DROP VIEW IF EXISTS ktp_summary CASCADE;

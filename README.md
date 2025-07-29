@@ -2,7 +2,13 @@
 
 Layanan microservice untuk verifikasi data KTP Dukcapil yang digunakan oleh Customer Registration Service.
 
-## Cara push ke GCR
+## Cara Deploy ke CloudRun
+
+1. build & push ke GCR
+2. buat deployment cloudrun
+3. buat bucket
+
+### Cara push ke GCR
 
 ```bash
 # build docker image
@@ -50,6 +56,54 @@ DATABASE_NAME="..."
 
 # jalankan script :
 ./setup.sh
+```
+
+Contoh untuk testing :
+
+```bash
+curl -X POST \
+  https://verificator-secure-onboarding-system-wlxypujzrq-as.a.run.app/api/dukcapil/verify-nik \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "nik": "3175031234567890",
+    "namaLengkap": "John Doe",
+    "tanggalLahir": "1990-05-15"
+  }'
+```
+
+| **NIK**          | **Nama Lengkap** | **Tanggal Lahir** |
+| :--------------- | :--------------- | :---------------- |
+| 3175031234567890 | John Doe         | 1990-05-15        |
+| 3175032345678901 | Jane Smith       | 1995-08-22        |
+| 3175033456789012 | Ahmad Rahman     | 1985-12-10        |
+| 3175034567890123 | Siti Nurhaliza   | 1992-03-18        |
+| 3175035678901234 | Budi Santoso     | 1988-11-25        |
+| 1234567890123456 | Test User One    | 1995-01-01        |
+| 1234567890123457 | Test User Two    | 1992-02-02        |
+| 3175036789012345 | Dewi Lestari     | 1993-01-01        |
+| 3175037890123456 | Fajar Ramadhan   | 1989-07-07        |
+| 3175038901234567 | Citra Kirana     | 1991-04-12        |
+| 3175039012345678 | Gatot Subroto    | 1978-09-20        |
+| 3175030123456789 | Hana Putri       | 1998-02-28        |
+| 3175031122334455 | Irfan Hakim      | 1980-06-03        |
+| 3175032233445566 | Kartika Sari     | 1996-10-10        |
+| 3175033344556677 | Lukman Sardi     | 1975-03-01        |
+| 3175034455667788 | Maria Ulfa       | 1994-07-19        |
+| 3175035566778899 | Noval Syahputra  | 1987-01-30        |
+| 3175036677889900 | Putri Ayu        | 1999-04-05        |
+| 3175037788990011 | Rizky Pratama    | 1982-08-14        |
+| 3175038899001122 | Sarah Wijayanto  | 1990-11-29        |
+| 3175039900112233 | Taufik Hidayat   | 1981-02-17        |
+| 3175030011223344 | Umi Kulsum       | 1997-06-08        |
+| 3175031020304050 | Vicky Prasetyo   | 1983-09-23        |
+| 3175032030405060 | Wulan Guritno    | 1992-12-04        |
+| 3175033040506070 | Xavier Putra     | 1986-03-11        |
+| 3175034050607080 | Yuni Shara       | 1991-05-27        |
+| 3175035060708090 | Zaki Anwar       | 1984-07-09        |
+| 3175036070809010 | Aisha Rahma      | 1996-09-16        |
+| 3175037080901020 | Bayu Dirgantara  | 1985-11-21        |
+| 3175038090102030 | Cinta Laura      | 1993-02-01        |
+
 ```
 
 ## 📋 Daftar Isi
