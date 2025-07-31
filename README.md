@@ -13,6 +13,7 @@ Layanan microservice untuk verifikasi data KTP Dukcapil yang digunakan oleh Cust
 ```bash
 # build docker image
 docker build -t asia.gcr.io/primeval-rune-467212-t9/verificator-secure-onboarding-system .
+docker push asia.gcr.io/primeval-rune-467212-t9/verificator-secure-onboarding-system:latest
 
 # login ke gcloud
 gcloud auth login
@@ -20,7 +21,6 @@ gcloud auth login
 # autentikasi docker
 gcloud auth configure-docker
 
-docker push asia.gcr.io/primeval-rune-467212-t9/verificator-secure-onboarding-system:latest
 
 gcloud auth list
 

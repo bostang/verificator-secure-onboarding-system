@@ -13,8 +13,9 @@ public class DukcapilServiceApplication {
     public static void main(String[] args) {
         // Load environment variables from .env file
                 // Load .env variables
-        Dotenv dotenv = Dotenv.load();
-        dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
+        // Dotenv dotenv = Dotenv.load();
+        // dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
+        // ketika di-deploy ke cloud, jangan lupa set environment variable di platform cloud
 
         SpringApplication.run(DukcapilServiceApplication.class, args);
         
