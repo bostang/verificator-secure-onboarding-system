@@ -13,9 +13,16 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.List;
 
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Value;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    // Inject nilai dari environment variable
+    @Value("${APP_CORS_ALLOWED_ORIGINS:http://localhost:8080,http://localhost:3000,http://localhost:5173,https://*.trycloudflare.com,http://127.0.0.1:*}")
+    private String allowedOriginsEnv;
     
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -63,14 +70,21 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        // Allow Customer Service dan Frontend
-        configuration.setAllowedOriginPatterns(Arrays.asList(
-            "http://localhost:8080",  // Customer Service
-            "http://localhost:3000",  // Frontend React
-            "http://localhost:5173",  // Frontend Vite
-            "https://*.trycloudflare.com", // Cloudflare tunnels
-            "http://127.0.0.1:*"      // Local testing
-        ));
+        // // Allow Customer Service dan Frontend
+        // configuration.setAllowedOriginPatterns(Arrays.asList(
+        //     "http://localhost:8080",  // Customer Service
+        //     "http://localhost:3000",  // Frontend React
+        //     "http://localhost:5173",  // Frontend Vite
+        //     "https://*.trycloudflare.com", // Cloudflare tunnels
+        //     "http://127.0.0.1:*"      // Local testing
+        // ));
+
+        // Parse the allowed origins from the environment variable
+        List<String> origins = Arrays.stream(allowedOriginsEnv.split(","))
+                                   .map(String::trim)
+                                   .collect(Collectors.toList());
+        configuration.setAllowedOriginPatterns(origins);
+        
         
         // Allow semua HTTP methods yang dibutuhkan
         configuration.setAllowedMethods(Arrays.asList(
