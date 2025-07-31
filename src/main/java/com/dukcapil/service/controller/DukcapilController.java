@@ -185,7 +185,7 @@ public class DukcapilController {
                 "status", "OK",
                 "service", "Dukcapil KTP Verification Service",
                 "version", "1.0.0",
-                "port", 8081,
+                "port", 8080,
                 "database", "dukcapil_ktp",
                 "totalRecords", totalRecords,
                 "endpoints", Map.of(
