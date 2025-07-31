@@ -66,7 +66,7 @@ Contoh untuk testing :
 
 ```bash
 curl -X POST \
-  https://verificator-secure-onboarding-system-wlxypujzrq-as.a.run.app/api/dukcapil/verify-nik \
+  https://verificator-secure-onboarding-system-441501015598.asia-southeast1.run.app/api/dukcapil/verify-nik \
   -H 'Content-Type: application/json' \
   -d '{
     "nik": "3175031234567890",
