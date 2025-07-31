@@ -45,6 +45,10 @@ INSTANCE_NAME="..."
 DATABASE_NAME="..."
 ```
 
+ketika deploy di cloudrun:
+
+![deploy-cloudrun-env-variables](./deploy-cloudrun-env-variables.png)
+
 ## Mulai Cepat
 
 ```bash
