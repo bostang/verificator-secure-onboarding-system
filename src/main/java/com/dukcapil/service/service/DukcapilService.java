@@ -1,16 +1,17 @@
 package com.dukcapil.service.service;
 
-import com.dukcapil.service.dto.KtpDataResponse;
-import com.dukcapil.service.model.KtpDukcapil;
-import com.dukcapil.service.repository.KtpDukcapilRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.dukcapil.service.dto.KtpDataResponse;
+import com.dukcapil.service.model.KtpDukcapil;
+import com.dukcapil.service.repository.KtpDukcapilRepository;
 
 @Service
 @Transactional
@@ -112,40 +113,65 @@ public class DukcapilService {
                     data
                 );
             } else {
-                // Check detail mismatch
                 Optional<KtpDukcapil> nikExists = ktpRepository.findByNik(nik);
                 if (nikExists.isPresent()) {
                     KtpDukcapil existing = nikExists.get();
-                    
-                    // Check apakah nama cocok tapi tanggal lahir tidak
-                    if (existing.getNamaLengkap().toLowerCase().equals(namaLengkap.trim().toLowerCase())) {
+
+                    // Verifikasi apakah NIK, nama, DAN tanggal lahir sesuai
+                    boolean isDataValid = existing.getNamaLengkap().equalsIgnoreCase(namaLengkap.trim())
+                                    && existing.getTanggalLahir().isEqual(tanggalLahir);
+
+                    if (isDataValid) {
+                        // Jika semua data cocok, lakukan proses selanjutnya (misalnya, kembalikan response sukses)
+                        return new KtpDataResponse(true, "Data KTP valid.");
+                    } else {
+                        // Jika salah satu atau semua data tidak cocok, berikan pesan error umum
                         return new KtpDataResponse(
-                            false, 
-                            "NIK dan nama sesuai, namun tanggal lahir tidak cocok. " +
-                            "Tanggal lahir di database: " + existing.getTanggalLahir()
-                        );
-                    } 
-                    // Check apakah tanggal lahir cocok tapi nama tidak
-                    else if (existing.getTanggalLahir().equals(tanggalLahir)) {
-                        return new KtpDataResponse(
-                            false, 
-                            "NIK dan tanggal lahir sesuai, namun nama tidak cocok. " +
-                            "Nama di database: " + existing.getNamaLengkap()
-                        );
-                    } 
-                    // Keduanya tidak cocok
-                    else {
-                        return new KtpDataResponse(
-                            false, 
-                            "NIK terdaftar namun nama dan tanggal lahir tidak sesuai dengan data Dukcapil"
+                            false,
+                            "Nama, NIK, atau tanggal lahir tidak sesuai dengan data Dukcapil."
                         );
                     }
                 } else {
+                    // Jika NIK tidak ditemukan, berikan pesan error umum
                     return new KtpDataResponse(
-                        false, 
-                        "NIK tidak terdaftar di database Dukcapil"
+                        false,
+                        "Nama, NIK, atau tanggal lahir tidak sesuai dengan data Dukcapil."
                     );
-                }
+}
+                // Check detail mismatch
+                // Optional<KtpDukcapil> nikExists = ktpRepository.findByNik(nik);
+                // if (nikExists.isPresent()) {
+                //     KtpDukcapil existing = nikExists.get();
+                    
+                //     // Check apakah nama cocok tapi tanggal lahir tidak
+                //     if (existing.getNamaLengkap().toLowerCase().equals(namaLengkap.trim().toLowerCase())) {
+                //         return new KtpDataResponse(
+                //             false, 
+                //             "NIK dan nama sesuai, namun tanggal lahir tidak cocok. " +
+                //             "Tanggal lahir di database: " + existing.getTanggalLahir()
+                //         );
+                //     } 
+                //     // Check apakah tanggal lahir cocok tapi nama tidak
+                //     else if (existing.getTanggalLahir().equals(tanggalLahir)) {
+                //         return new KtpDataResponse(
+                //             false, 
+                //             "NIK dan tanggal lahir sesuai, namun nama tidak cocok. " +
+                //             "Nama di database: " + existing.getNamaLengkap()
+                //         );
+                //     } 
+                //     // Keduanya tidak cocok
+                //     else {
+                //         return new KtpDataResponse(
+                //             false, 
+                //             "NIK terdaftar namun nama dan tanggal lahir tidak sesuai dengan data Dukcapil"
+                //         );
+                //     }
+                // } else {
+                //     return new KtpDataResponse(
+                //         false, 
+                //         "NIK tidak terdaftar di database Dukcapil"
+                //     );
+                // }
             }
             
         } catch (Exception e) {
