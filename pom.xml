@@ -40,13 +40,13 @@
 	    <!-- Add Spring Cloud GCP Dependency BOM -->
     <dependencyManagement>
         <dependencies>
-          <dependency>
+          <!-- <dependency>
           <groupId>com.google.cloud</groupId>
           <artifactId>spring-cloud-gcp-dependencies</artifactId>
           <version>4.1.4</version>
           <type>pom</type>
           <scope>import</scope>
-          </dependency>
+          </dependency> -->
       </dependencies>
     </dependencyManagement>
 
@@ -140,10 +140,10 @@
 		</dependency>
 
 		<!-- Google cloud SQL -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.google.cloud</groupId>
 			<artifactId>spring-cloud-gcp-starter-sql-postgresql</artifactId>
-		</dependency>
+		</dependency> -->
 	</dependencies>
 
 	<build>
